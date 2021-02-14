@@ -15,7 +15,7 @@ export type OxReturn<ObjectType> = RemoveIgnoredKey<ObjectType>;
 
 const toStr = Object.prototype.toString;
 
-function _ox<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
+function cleanObject<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
   let k: string;
   for (k in obj) {
     cleanProperty(k, obj[k], obj);
@@ -43,7 +43,7 @@ function _ox<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
       if (toStr.call(obj[k]) === '[object Array]') {
         ref[key] = ref[key].filter(shouldCleanProperty);
       } else {
-        _ox(ref[key], strict);
+        cleanObject(ref[key], strict);
       }
 
       if (isEmpty(ref[key])) {
@@ -57,18 +57,15 @@ function _ox<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
   }
 }
 
-export default function ox<T extends Obj>(
-  obj: T,
-  strict?: boolean
-): OxReturn<T> {
-  strict = typeof strict === 'undefined' ? true : strict;
-  let newObj = _ox(obj, strict);
-
-  if (newObj === null) {
-    newObj = {} as any;
+export default function ox<T, U extends boolean>(
+  obj?: T,
+  strict?: U
+): T extends Obj ? (U extends false ? T : OxReturn<T>) : T {
+  if (typeof strict === 'undefined') {
+    strict = true as U;
   }
-
-  return newObj;
+  if (!obj || typeof obj === 'boolean') return {} as any;
+  return cleanObject(obj as Obj, strict as boolean) ?? ({} as any);
 }
 
 export { isEmpty };

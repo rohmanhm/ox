@@ -1,8 +1,6 @@
 const hasOwnProp = Object.prototype.hasOwnProperty;
 
-export function isEmpty<ObjectType extends { [key: string]: unknown }>(
-  obj: ObjectType
-) {
+export function isEmpty<T extends { [key: string]: unknown }>(obj: T) {
   // Check if obj has .length property
   // and if === 0 - it's empty
   if (obj.length) {
