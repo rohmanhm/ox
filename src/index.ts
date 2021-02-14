@@ -1,7 +1,7 @@
 import { isEmpty } from './isEmpty';
 
 // Type of object shape
-export type Obj = { [key: string]: any };
+export type Object = { [key: string]: any };
 // Type of ignored type
 export type IgnoredTypes = null | undefined;
 // Util to extract type from <T> value
@@ -15,7 +15,7 @@ export type OxReturn<ObjectType> = RemoveIgnoredKey<ObjectType>;
 
 const toStr = Object.prototype.toString;
 
-function cleanObject<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
+function cleanObject<T extends Object>(obj: T, strict: boolean): OxReturn<T> {
   let k: string;
   for (k in obj) {
     cleanProperty(k, obj[k], obj);
@@ -29,7 +29,7 @@ function cleanObject<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
     return null;
   }
 
-  function cleanProperty(key: string, value: any, ref: Obj) {
+  function cleanProperty(key: string, value: any, ref: Object) {
     if (!shouldCleanProperty(value)) {
       delete ref[key];
       return;
@@ -60,12 +60,18 @@ function cleanObject<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
 export default function ox<T, U extends boolean>(
   obj?: T,
   strict?: U
-): T extends Obj ? (U extends false ? T : OxReturn<T>) : T {
+): T extends boolean
+  ? Object
+  : T extends Object
+  ? U extends false
+    ? T
+    : OxReturn<T>
+  : T {
   if (typeof strict === 'undefined') {
     strict = true as U;
   }
   if (!obj || typeof obj === 'boolean') return {} as any;
-  return cleanObject(obj as Obj, strict as boolean) ?? ({} as any);
+  return cleanObject(obj as Object, strict as boolean) ?? ({} as any);
 }
 
 export { isEmpty };
