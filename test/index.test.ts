@@ -1,13 +1,11 @@
-import { po } from '../src';
+import ox from '../src';
 
 test('remove null and undefined key value', () => {
   const expected = {
     className: 'only-this-obj-key-will-persist',
-    disabled: '',
-    autoComplete: false,
   };
 
-  const actual = po({
+  const actual = ox({
     ...expected,
     disabled: '',
     autoComplete: false,
@@ -18,12 +16,14 @@ test('remove null and undefined key value', () => {
   expect(actual).toEqual(expected);
 });
 
-test('strict mode remove falsy key value', () => {
+test('disable strict mode not remove falsy key value', () => {
   const expected = {
     className: 'only-this-obj-key-will-persist',
+    disabled: '',
+    autoComplete: false,
   };
 
-  const actual = po(
+  const actual = ox(
     {
       ...expected,
       disabled: '',
@@ -31,7 +31,7 @@ test('strict mode remove falsy key value', () => {
       checked: undefined,
       spellCheck: null,
     },
-    true
+    false
   );
 
   expect(actual).toEqual(expected);

@@ -1,54 +1,52 @@
-# purify-obj
+# @rohmanhm/ox
 
-> Purify & clean objects recursively, deleting undefined & null or falsy properties.
+> A Javascript utility to clean objects recursively, deleting undefined & null or falsy properties.
 
 ## Install
 
 ```
-$ npm install purify-obj
+$ npm install @rohmanhm/ox
 ```
 
 Or
 
 ```
-$ yarn add purify-obj
+$ yarn add @rohmanhm/ox
 ```
 
 ## Usage
 
 ```js
-import { PurifyObj } from "purify-obj";
+import ox from '@rohmanhm/ox';
 // Or
-const { PurifyObj } = require("purify-obj");
-// Or you can use the `po` shortcut
-import { po } from "purify-obj";
+const ox = require('@rohmanhm/ox').default;
 
 const object = {
-  className: "only-this-obj-key-will-persist",
-  disabled: "",
+  className: 'only-this-obj-key-will-persist',
+  disabled: '',
   autoComplete: false,
   checked: undefined,
-  spellCheck: null
+  spellCheck: null,
 };
-const newObject = po(object);
+const newObject = ox(object);
 //=> {className: 'only-this-obj-key-will-persist'}
 ```
 
 ## API
 
-### PurifyObj(source, strict)
+### ox(source, strict)
 
 #### source
 
 Type: `object`
 
-Source object to purify properties from.
+Source object to clean properties from.
 
 #### strict
 
 Type: `boolean`
-
-Strict will purify all falsy key
+Default: `true`
+Strict will clean all falsy key
 
 ## Local Development
 

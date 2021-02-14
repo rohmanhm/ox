@@ -1,7 +1,7 @@
 import { isEmpty } from './isEmpty';
 
 // Type of object shape
-export type ObjectShape = { [key: string]: any };
+export type Obj = { [key: string]: any };
 // Type of ignored type
 export type IgnoredTypes = null | undefined;
 // Util to extract type from <T> value
@@ -11,34 +11,14 @@ export type MethodKeys<T, U> = {
 // Util to remove ignored key
 export type RemoveIgnoredKey<T> = Pick<T, MethodKeys<T, IgnoredTypes>> | null;
 // Type object return
-export type PurifyObjReturn<ObjectType> = RemoveIgnoredKey<ObjectType>;
+export type OxReturn<ObjectType> = RemoveIgnoredKey<ObjectType>;
 
 const toStr = Object.prototype.toString;
 
-export function PurifyObj<ObjectType extends ObjectShape>(
-  obj: ObjectType,
-  strict?: boolean
-): PurifyObjReturn<ObjectType> {
-  strict = strict || false;
-
-  let newObj = _purifyObj(obj, strict);
-
-  if (newObj === null) {
-    newObj = {} as any;
-  }
-
-  return newObj;
-}
-
-export const po = PurifyObj;
-
-function _purifyObj<ObjectType extends ObjectShape>(
-  obj: ObjectType,
-  strict: boolean
-): PurifyObjReturn<ObjectType> {
+function _ox<T extends Obj>(obj: T, strict: boolean): OxReturn<T> {
   let k: string;
   for (k in obj) {
-    purifyProperty(k, obj[k], obj);
+    cleanProperty(k, obj[k], obj);
   }
 
   // Check if the object is empty
@@ -49,8 +29,8 @@ function _purifyObj<ObjectType extends ObjectShape>(
     return null;
   }
 
-  function purifyProperty(key: string, value: any, ref: ObjectShape) {
-    if (!shouldPurifyProperty(value)) {
+  function cleanProperty(key: string, value: any, ref: Obj) {
+    if (!shouldCleanProperty(value)) {
       delete ref[key];
       return;
     }
@@ -61,9 +41,9 @@ function _purifyObj<ObjectType extends ObjectShape>(
     if (typeOfValue === 'object' && toStr.call(value) !== '[object Date]') {
       // Exception - If array
       if (toStr.call(obj[k]) === '[object Array]') {
-        ref[key] = ref[key].filter(shouldPurifyProperty);
+        ref[key] = ref[key].filter(shouldCleanProperty);
       } else {
-        _purifyObj(ref[key], strict);
+        _ox(ref[key], strict);
       }
 
       if (isEmpty(ref[key])) {
@@ -72,9 +52,23 @@ function _purifyObj<ObjectType extends ObjectShape>(
     }
   }
 
-  function shouldPurifyProperty(value: any) {
+  function shouldCleanProperty(value: any) {
     return !(!value && (strict || (!strict && value == null)));
   }
+}
+
+export default function ox<T extends Obj>(
+  obj: T,
+  strict?: boolean
+): OxReturn<T> {
+  strict = typeof strict === 'undefined' ? true : strict;
+  let newObj = _ox(obj, strict);
+
+  if (newObj === null) {
+    newObj = {} as any;
+  }
+
+  return newObj;
 }
 
 export { isEmpty };
