@@ -61,7 +61,7 @@ export default function ox<T, U extends boolean>(
   obj?: T,
   strict?: U
 ): T extends boolean
-  ? Object
+  ? object
   : T extends Object
   ? U extends false
     ? T
